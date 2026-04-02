@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Safe Space | Your Anonymous Sanctuary</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode:"class",
+    theme:{extend:{colors:{
+      "secondary-container":"#b5edec","on-secondary-container":"#225a5a",
+      "outline-variant":"#bbbaaf","on-surface-variant":"#65655c",
+      "on-primary":"#ffffff","surface":"#fdffda","on-surface":"#383830",
+      "surface-container-low":"#fcf9f0","surface-container-lowest":"#ffffff",
+      "primary-container":"#b9ece7","on-primary-container":"#285a56",
+      "primary":"#3c6d69","primary-dim":"#2f605d","surface-container":"#f6f4ea"
+    },fontFamily:{"headline":["Manrope"],"body":["Inter"],"label":["Inter"]},
+    borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"1.5rem","full":"9999px"}}}
+  }
+</script>
+<style>
+  .ethereal-glow{background:radial-gradient(circle at 50% 50%,rgba(185,236,231,0.4) 0%,rgba(253,255,218,0) 70%);}
+  .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;}
+  body{min-height:max(884px,100dvh);}
+</style>
+</head>
+<body class="bg-surface text-on-surface font-body overflow-x-hidden">
+
+<nav class="w-full top-0 sticky z-50 flex justify-between items-center px-6 py-4 bg-[#fdffda]">
+  <div class="flex items-center gap-3">
+    <span class="material-symbols-outlined text-[#3c6d69]">spa</span>
+    <span class="font-['Manrope'] font-bold text-[#3c6d69] tracking-tight text-lg">Safe Space</span>
+  </div>
+  <div class="flex items-center gap-6">
+    <a class="font-label text-sm font-semibold text-primary hover:opacity-80 transition-opacity" href="login.html">Login</a>
+    <a class="bg-primary text-on-primary px-6 py-2.5 rounded-full font-label text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm" href="register.html">Sign Up</a>
+  </div>
+</nav>
+
+<main class="relative min-h-[calc(100vh-76px)] flex flex-col items-center justify-center px-6 py-12 md:py-24 overflow-hidden">
+  <div class="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] ethereal-glow rounded-full -z-10"></div>
+  <div class="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] ethereal-glow rounded-full opacity-60 -z-10"></div>
+
+  <div class="max-w-6xl w-full grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+    <div class="md:col-span-7 flex flex-col items-start space-y-8">
+      <div class="space-y-4">
+        <span class="inline-flex items-center gap-2 px-4 py-1.5 bg-secondary-container text-on-secondary-container rounded-full text-xs font-semibold tracking-wide uppercase">
+          <span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1;">lock</span>
+          100% Anonymous &amp; Secure
+        </span>
+        <h1 class="font-headline font-extrabold text-5xl md:text-7xl text-on-surface leading-[1.1] tracking-[-0.03em]">
+          You're not alone.<br/>
+          <span class="text-primary italic font-medium">Share your thoughts</span> in a safe space.
+        </h1>
+      </div>
+      <p class="font-body text-lg md:text-xl text-on-surface-variant max-w-xl leading-relaxed">
+        A serene sanctuary for your emotions. Connect with empathetic listeners or offer your strength to others, all under the veil of complete privacy.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto pt-4">
+        <a href="register.html?role=user" class="group flex items-center justify-between gap-6 bg-gradient-to-br from-primary to-primary-dim text-on-primary px-8 py-6 rounded-xl transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-[0_20px_50px_rgba(60,109,105,0.15)]">
+          <div class="text-left">
+            <span class="block font-headline text-xl font-bold">I need to talk</span>
+            <span class="block text-sm opacity-80 font-body">Find a supportive listener</span>
+          </div>
+          <span class="material-symbols-outlined text-3xl group-hover:translate-x-1 transition-transform">chat_bubble</span>
+        </a>
+        <a href="register.html?role=mentor" class="group flex items-center justify-between gap-6 bg-surface-container-lowest text-primary px-8 py-6 rounded-xl border border-outline-variant/15 transition-all duration-300 hover:bg-white hover:scale-[1.02] active:scale-95 shadow-sm">
+          <div class="text-left">
+            <span class="block font-headline text-xl font-bold">I want to listen</span>
+            <span class="block text-sm text-on-surface-variant font-body">Become a peer mentor</span>
+          </div>
+          <span class="material-symbols-outlined text-3xl text-primary/60 group-hover:translate-x-1 transition-transform">volunteer_activism</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="md:col-span-5 relative">
+      <div class="grid grid-cols-2 gap-4">
+        <div class="col-span-2 bg-surface-container-low p-8 rounded-xl space-y-4 transform rotate-1">
+          <div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center text-primary">
+            <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">visibility_off</span>
+          </div>
+          <h3 class="font-headline text-xl font-bold text-on-surface">No Names. No Pressure.</h3>
+          <p class="text-on-surface-variant text-sm">Your identity is never revealed. Focus entirely on your feelings without the fear of judgment.</p>
+        </div>
+        <div class="bg-secondary-container/30 rounded-xl overflow-hidden aspect-square flex items-center justify-center p-6 -rotate-2">
+          <div class="relative w-full h-full rounded-full bg-white/40 backdrop-blur-sm flex items-center justify-center">
+            <span class="material-symbols-outlined text-primary scale-[2.5]">self_improvement</span>
+          </div>
+        </div>
+        <div class="bg-primary-container/20 p-6 rounded-xl space-y-2 rotate-2 flex flex-col justify-center">
+          <div class="flex -space-x-2">
+            <div class="w-8 h-8 rounded-full bg-slate-300 border-2 border-surface"></div>
+            <div class="w-8 h-8 rounded-full bg-teal-200 border-2 border-surface"></div>
+            <div class="w-8 h-8 rounded-full bg-amber-100 border-2 border-surface"></div>
+          </div>
+          <p class="text-xs font-bold text-primary">People Online</p>
+          <p class="text-[10px] text-on-surface-variant">Ready to listen right now</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="w-screen mt-24 bg-surface-container-low py-16 flex justify-center">
+    <div class="max-w-4xl px-6 text-center space-y-8">
+      <blockquote class="text-2xl md:text-3xl font-headline font-light italic text-on-surface-variant leading-relaxed">
+        "Healing takes time, and asking for help is a courageous step. Here, your voice carries weight, and your silence is respected."
+      </blockquote>
+      <div class="flex items-center justify-center gap-2 text-primary font-semibold">
+        <span class="h-px w-8 bg-primary"></span>
+        <span>A Community of Compassion</span>
+        <span class="h-px w-8 bg-primary"></span>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="w-full py-12 px-6 border-t border-outline-variant/10 bg-surface">
+  <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary/60">spa</span>
+      <span class="font-headline font-bold text-on-surface/60">Safe Space</span>
+    </div>
+    <p class="text-xs text-outline italic">You are heard. You are valid.</p>
+  </div>
+</footer>
+</body>
+</html>

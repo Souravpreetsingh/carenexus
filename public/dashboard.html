@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Safe Space | Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+  tailwind.config={darkMode:"class",theme:{extend:{colors:{
+    "secondary-container":"#b5edec","on-secondary-container":"#225a5a",
+    "outline-variant":"#bbbaaf","on-surface-variant":"#65655c",
+    "on-primary":"#ffffff","surface":"#fdffda","on-surface":"#383830",
+    "surface-container-low":"#fcf9f0","surface-container-lowest":"#ffffff",
+    "surface-container-high":"#f0eee3","surface-container-highest":"#eae8dd",
+    "primary-container":"#b9ece7","on-primary-container":"#285a56",
+    "primary":"#3c6d69","primary-dim":"#2f605d",
+    "secondary":"#376d6d","error":"#af3d3b","error-container":"#fa746f",
+    "surface-container":"#f6f4ea","surface-bright":"#fdffda"
+  },fontFamily:{"headline":["Manrope"],"body":["Inter"]}}}}
+</script>
+<style>
+  .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;}
+  body{min-height:100dvh;background:#fdffda;}
+</style>
+</head>
+<body class="font-body text-on-surface">
+
+<!-- Header -->
+<header class="w-full top-0 sticky z-50 bg-[#fdffda] flex justify-between items-center px-6 py-4">
+  <div class="flex items-center gap-3">
+    <span class="material-symbols-outlined text-[#3c6d69]">spa</span>
+    <span class="font-['Manrope'] font-bold text-[#3c6d69] tracking-tight text-lg">Safe Space</span>
+  </div>
+  <div class="flex items-center gap-4">
+    <span id="navUser" class="text-sm text-on-surface-variant font-medium hidden md:block"></span>
+    <button onclick="logout()" class="flex items-center gap-2 px-4 py-2 rounded-xl text-error bg-error/5 hover:bg-error/10 transition-colors border border-error/10 text-sm font-semibold">
+      <span class="material-symbols-outlined text-[18px]">logout</span> Logout
+    </button>
+  </div>
+</header>
+
+<!-- USER DASHBOARD -->
+<main id="userDash" class="max-w-6xl mx-auto px-6 pt-8 pb-32 hidden">
+  <section class="mb-12">
+    <div class="max-w-2xl">
+      <h2 class="font-headline text-5xl md:text-6xl font-extrabold text-on-surface tracking-tight leading-[1.1] mb-4">
+        Hello, <span id="userGreetName" class="text-primary"></span>.
+      </h2>
+      <p class="text-on-surface-variant text-lg mb-8">Your space is ready. Whether you need to talk or just breathe, we're here with you.</p>
+      <div id="userSessionStatus"></div>
+    </div>
+  </section>
+
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+    <div class="md:col-span-7 bg-surface-container-low rounded-xl p-8 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between mb-8">
+          <h3 class="text-2xl font-headline font-bold">Daily Check-in</h3>
+          <span class="text-sm font-label uppercase tracking-widest text-outline">Pulse</span>
+        </div>
+        <div class="flex flex-wrap gap-4 mb-8">
+          <button class="flex flex-col items-center gap-2 bg-surface-container-lowest hover:bg-secondary-container transition-colors p-6 rounded-full w-24 h-24 justify-center shadow-sm">
+            <span class="material-symbols-outlined text-3xl">sentiment_satisfied</span><span class="text-xs font-medium">Calm</span>
+          </button>
+          <button class="flex flex-col items-center gap-2 bg-secondary-container text-on-secondary-container p-6 rounded-full w-24 h-24 justify-center shadow-md">
+            <span class="material-symbols-outlined text-3xl">sentiment_dissatisfied</span><span class="text-xs font-medium">Anxious</span>
+          </button>
+          <button class="flex flex-col items-center gap-2 bg-surface-container-lowest hover:bg-secondary-container transition-colors p-6 rounded-full w-24 h-24 justify-center shadow-sm">
+            <span class="material-symbols-outlined text-3xl">sentiment_neutral</span><span class="text-xs font-medium">Quiet</span>
+          </button>
+          <button class="flex flex-col items-center gap-2 bg-surface-container-lowest hover:bg-secondary-container transition-colors p-6 rounded-full w-24 h-24 justify-center shadow-sm">
+            <span class="material-symbols-outlined text-3xl">mood_bad</span><span class="text-xs font-medium">Heavy</span>
+          </button>
+        </div>
+      </div>
+      <div class="bg-surface-bright rounded-xl p-6 border border-outline-variant/10">
+        <p class="italic text-on-surface-variant leading-relaxed">"Small steps in the right direction can turn out to be the biggest step of your life."</p>
+      </div>
+    </div>
+
+    <div class="md:col-span-5 space-y-6">
+      <div class="bg-error-container/20 border border-error-container/30 rounded-xl p-8">
+        <div class="flex items-center gap-3 mb-4 text-error">
+          <span class="material-symbols-outlined">emergency</span>
+          <h4 class="font-bold font-headline">Need immediate help?</h4>
+        </div>
+        <p class="text-on-surface-variant text-sm mb-4 leading-relaxed">If you are in immediate danger, please connect with professional emergency services.</p>
+        <a class="inline-flex items-center gap-2 text-error font-bold text-sm hover:underline" href="#">
+          Contact Emergency Resources <span class="material-symbols-outlined text-sm">arrow_forward</span>
+        </a>
+      </div>
+      <div class="bg-surface-container-highest rounded-xl p-6">
+        <h4 class="font-headline font-bold mb-4">Quick Resources</h4>
+        <ul class="space-y-4">
+          <li class="flex items-center justify-between group cursor-pointer">
+            <span class="text-on-surface-variant group-hover:text-primary transition-colors">Crisis Text Line</span>
+            <span class="material-symbols-outlined text-outline group-hover:text-primary">open_in_new</span>
+          </li>
+          <li class="flex items-center justify-between group cursor-pointer">
+            <span class="text-on-surface-variant group-hover:text-primary transition-colors">International Support</span>
+            <span class="material-symbols-outlined text-outline group-hover:text-primary">open_in_new</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- MENTOR DASHBOARD -->
+<main id="mentorDash" class="max-w-7xl mx-auto px-6 pt-8 pb-32 hidden">
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
+    <div class="max-w-2xl">
+      <h1 class="font-headline text-5xl md:text-6xl font-extrabold text-on-surface tracking-tight mb-4">
+        Welcome back, <span id="mentorGreetName" class="text-primary"></span>.
+      </h1>
+      <p class="text-on-surface-variant text-lg leading-relaxed">Your presence today offers a sanctuary for those seeking light. Thank you for being a guide.</p>
+    </div>
+  </div>
+
+  <section class="mb-12">
+    <div class="flex items-center justify-between mb-8">
+      <h2 class="font-headline text-3xl font-bold tracking-tight">Incoming Requests</h2>
+      <button onclick="loadPending()" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-container text-on-primary-container text-sm font-bold hover:opacity-80 transition-opacity">
+        <span class="material-symbols-outlined text-base">refresh</span> Refresh
+      </button>
+    </div>
+    <div id="pendingList" class="grid grid-cols-1 gap-4"></div>
+  </section>
+
+  <div id="mentorActiveWrap" class="hidden mb-12">
+    <h2 class="font-headline text-3xl font-bold tracking-tight mb-6">Active Session</h2>
+    <div id="mentorActiveCard"></div>
+  </div>
+</main>
+
+<!-- Bottom Nav -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-[#fdffda]/70 backdrop-blur-xl border-t border-[#bbbaaf]/15 shadow-[0_-12px_40px_rgba(56,56,48,0.05)] rounded-t-[1.5rem]">
+  <div class="flex flex-col items-center justify-center text-[#383830] opacity-60 cursor-pointer hover:scale-105 transition-transform">
+    <span class="material-symbols-outlined mb-1">self_improvement</span>
+    <span class="font-['Inter'] text-xs font-medium">Reflect</span>
+  </div>
+  <div class="flex flex-col items-center justify-center bg-[#b9ece7] text-[#3c6d69] rounded-full px-5 py-1 cursor-pointer hover:scale-105 transition-transform">
+    <span class="material-symbols-outlined mb-1" style="font-variation-settings:'FILL' 1;">groups</span>
+    <span class="font-['Inter'] text-xs font-medium">Connect</span>
+  </div>
+  <div class="flex flex-col items-center justify-center text-[#383830] opacity-60 cursor-pointer hover:scale-105 transition-transform">
+    <span class="material-symbols-outlined mb-1">edit_note</span>
+    <span class="font-['Inter'] text-xs font-medium">Journal</span>
+  </div>
+  <div class="flex flex-col items-center justify-center text-[#383830] opacity-60 cursor-pointer hover:scale-105 transition-transform">
+    <span class="material-symbols-outlined mb-1">emergency_share</span>
+    <span class="font-['Inter'] text-xs font-medium">Support</span>
+  </div>
+</nav>
+
+<script>
+const token = localStorage.getItem('token');
+const user = JSON.parse(localStorage.getItem('user') || 'null');
+if (!token || !user) location.href = 'login.html';
+
+document.getElementById('navUser').textContent = `${user.username} (${user.role})`;
+let currentSession = null;
+
+if (user.role === 'user') {
+  document.getElementById('userDash').classList.remove('hidden');
+  document.getElementById('userGreetName').textContent = user.username;
+  loadMySession();
+} else {
+  document.getElementById('mentorDash').classList.remove('hidden');
+  document.getElementById('mentorGreetName').textContent = user.username;
+  loadMySession();
+  loadPending();
+}
+
+async function apiFetch(url, opts={}) {
+  return fetch(url, {...opts, headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`,...(opts.headers||{})}});
+}
+
+async function loadMySession() {
+  const res = await apiFetch('/api/sessions/my');
+  const data = await res.json();
+  currentSession = data.session;
+
+  if (user.role === 'user') {
+    const box = document.getElementById('userSessionStatus');
+    if (!currentSession) {
+      box.innerHTML = `<button onclick="requestSession()"
+        class="group relative inline-flex items-center justify-between gap-6 bg-gradient-to-br from-primary to-primary-dim text-on-primary px-8 py-5 rounded-xl shadow-xl hover:opacity-90 transition-all duration-300 active:scale-95">
+        <span class="font-headline font-bold text-xl">Talk to a Mentor</span>
+        <div class="bg-primary-container/20 p-2 rounded-full group-hover:translate-x-1 transition-transform">
+          <span class="material-symbols-outlined">forum</span>
+        </div>
+      </button>`;
+    } else if (currentSession.status === 'pending') {
+      box.innerHTML = `<div class="inline-flex items-center gap-3 bg-secondary-container/40 px-6 py-4 rounded-xl">
+        <span class="material-symbols-outlined text-secondary animate-pulse">hourglass_top</span>
+        <span class="font-semibold text-on-secondary-container">Waiting for a mentor to connect...</span>
+      </div>`;
+    } else if (currentSession.status === 'active') {
+      box.innerHTML = `<button onclick="goToChat()"
+        class="group inline-flex items-center justify-between gap-6 bg-gradient-to-br from-primary to-primary-dim text-on-primary px-8 py-5 rounded-xl shadow-xl hover:opacity-90 transition-all active:scale-95">
+        <span class="font-headline font-bold text-xl">Continue Chat</span>
+        <span class="material-symbols-outlined text-2xl group-hover:translate-x-1 transition-transform">chat_bubble</span>
+      </button>`;
+    }
+  } else {
+    const wrap = document.getElementById('mentorActiveWrap');
+    const card = document.getElementById('mentorActiveCard');
+    if (currentSession && currentSession.status === 'active') {
+      wrap.classList.remove('hidden');
+      card.innerHTML = `<div class="bg-surface-container-low p-6 rounded-xl flex flex-col md:flex-row items-center justify-between gap-6 border-l-4 border-secondary">
+        <div class="flex items-center gap-6 w-full">
+          <div class="w-14 h-14 rounded-full bg-white flex items-center justify-center shadow-sm">
+            <span class="material-symbols-outlined text-secondary text-3xl" style="font-variation-settings:'FILL' 1;">chat_bubble</span>
+          </div>
+          <div>
+            <h3 class="font-bold text-lg">Anonymous User</h3>
+            <p class="text-secondary font-medium text-sm">Active Session</p>
+          </div>
+        </div>
+        <button onclick="goToChat()" class="w-full md:w-auto bg-secondary-container text-on-secondary-container px-8 py-3 rounded-xl font-bold hover:bg-secondary-container/80 transition-colors">
+          Return to Chat
+        </button>
+      </div>`;
+    }
+  }
+}
+
+async function requestSession() {
+  const res = await apiFetch('/api/sessions/request', {method:'POST'});
+  if (res.ok) loadMySession();
+}
+
+async function loadPending() {
+  const res = await apiFetch('/api/sessions/pending');
+  const data = await res.json();
+  const list = document.getElementById('pendingList');
+  if (!data.sessions || data.sessions.length === 0) {
+    list.innerHTML = `<div class="bg-surface-container-low rounded-xl p-12 text-center text-on-surface-variant">
+      <span class="material-symbols-outlined text-5xl mb-4 block opacity-30">inbox</span>
+      No pending requests right now. Check back soon.
+    </div>`;
+    return;
+  }
+  list.innerHTML = data.sessions.map(s => `
+    <div class="bg-surface-container-low p-6 rounded-xl flex flex-col md:flex-row items-center justify-between gap-6 hover:bg-surface-container-high transition-colors">
+      <div class="flex items-center gap-6 w-full">
+        <div class="w-14 h-14 rounded-full bg-white flex items-center justify-center shadow-sm">
+          <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings:'FILL' 1;">person</span>
+        </div>
+        <div>
+          <div class="flex items-center gap-3 mb-1">
+            <h3 class="font-bold text-lg">Anonymous User</h3>
+            <span class="bg-error/10 text-error text-[10px] uppercase font-extrabold px-2 py-0.5 rounded tracking-widest">Waiting</span>
+          </div>
+          <p class="text-on-surface-variant text-sm flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-primary animate-pulse inline-block"></span>
+            Waiting for connection
+          </p>
+        </div>
+      </div>
+      <button onclick="acceptSession('${s._id}')"
+        class="w-full md:w-auto bg-primary text-on-primary px-8 py-3 rounded-xl font-bold hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2">
+        Accept Request <span class="material-symbols-outlined text-lg">chevron_right</span>
+      </button>
+    </div>
+  `).join('');
+}
+
+async function acceptSession(id) {
+  const res = await apiFetch(`/api/sessions/${id}/accept`, {method:'POST'});
+  if (res.ok) { loadMySession(); loadPending(); }
+}
+
+function goToChat() {
+  if (currentSession) {
+    localStorage.setItem('roomId', currentSession.roomId);
+    localStorage.setItem('sessionId', currentSession._id);
+    location.href = 'chat.html';
+  }
+}
+
+function logout() { localStorage.clear(); location.href = 'index.html'; }
+</script>
+</body>
+</html>

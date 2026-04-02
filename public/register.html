@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Safe Space | Sign Up</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+  tailwind.config={darkMode:"class",theme:{extend:{colors:{
+    "secondary-container":"#b5edec","on-secondary-container":"#225a5a",
+    "outline-variant":"#bbbaaf","on-surface-variant":"#65655c",
+    "on-primary":"#ffffff","surface":"#fdffda","on-surface":"#383830",
+    "surface-container-low":"#fcf9f0","surface-container-lowest":"#ffffff",
+    "primary-container":"#b9ece7","on-primary-container":"#285a56",
+    "primary":"#3c6d69","primary-dim":"#2f605d","error":"#af3d3b"
+  },fontFamily:{"headline":["Manrope"],"body":["Inter"]}}}}
+</script>
+<style>
+  .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;}
+  body{min-height:100dvh;background:#fdffda;}
+</style>
+</head>
+<body class="font-body text-on-surface flex flex-col">
+
+<nav class="w-full sticky top-0 z-50 flex justify-between items-center px-6 py-4 bg-[#fdffda]">
+  <a href="index.html" class="flex items-center gap-2">
+    <span class="material-symbols-outlined text-[#3c6d69]">spa</span>
+    <span class="font-['Manrope'] font-bold text-[#3c6d69] tracking-tight text-lg">Safe Space</span>
+  </a>
+</nav>
+
+<main class="flex-1 flex items-center justify-center px-6 py-12">
+  <div class="w-full max-w-md">
+    <div class="bg-surface-container-lowest rounded-2xl p-10 shadow-[0_12px_40px_rgba(56,56,48,0.08)] border border-outline-variant/15">
+      <div class="text-center mb-8">
+        <div class="w-16 h-16 rounded-full bg-primary-container flex items-center justify-center mx-auto mb-4">
+          <span class="material-symbols-outlined text-primary text-3xl">favorite</span>
+        </div>
+        <h1 class="font-headline text-3xl font-bold text-on-surface">Create your sanctuary</h1>
+        <p class="text-on-surface-variant mt-2 text-sm">Join a community built on compassion</p>
+      </div>
+
+      <!-- Role selector pills -->
+      <div class="flex gap-3 mb-6" id="rolePills">
+        <button type="button" onclick="setRole('user')" id="pill-user"
+          class="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-primary bg-primary-container/30 text-primary font-semibold text-sm transition-all">
+          <span class="material-symbols-outlined text-base">person</span> I need to talk
+        </button>
+        <button type="button" onclick="setRole('mentor')" id="pill-mentor"
+          class="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-outline-variant/40 text-on-surface-variant font-semibold text-sm transition-all">
+          <span class="material-symbols-outlined text-base">volunteer_activism</span> I want to listen
+        </button>
+      </div>
+      <input type="hidden" id="role" value="user"/>
+
+      <form id="registerForm" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-on-surface mb-1.5">Username</label>
+          <input id="username" type="text" placeholder="Choose a username" required
+            class="w-full px-4 py-3 rounded-xl border border-outline-variant/40 bg-surface focus:outline-none focus:border-primary text-sm font-body transition-colors"/>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-on-surface mb-1.5">Email</label>
+          <input id="email" type="email" placeholder="you@example.com" required
+            class="w-full px-4 py-3 rounded-xl border border-outline-variant/40 bg-surface focus:outline-none focus:border-primary text-sm font-body transition-colors"/>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-on-surface mb-1.5">Password</label>
+          <input id="password" type="password" placeholder="Min 6 characters" required minlength="6"
+            class="w-full px-4 py-3 rounded-xl border border-outline-variant/40 bg-surface focus:outline-none focus:border-primary text-sm font-body transition-colors"/>
+        </div>
+        <p id="errMsg" class="text-error text-sm hidden"></p>
+        <button type="submit"
+          class="w-full bg-gradient-to-br from-primary to-primary-dim text-on-primary py-3.5 rounded-xl font-headline font-bold text-base hover:opacity-90 active:scale-95 transition-all mt-2">
+          Create Account
+        </button>
+      </form>
+
+      <p class="text-center text-sm text-on-surface-variant mt-6">
+        Already have an account?
+        <a href="login.html" class="text-primary font-semibold hover:underline">Login</a>
+      </p>
+    </div>
+  </div>
+</main>
+
+<script>
+  // Pre-select role from URL param
+  const params = new URLSearchParams(location.search);
+  if (params.get('role') === 'mentor') setRole('mentor');
+
+  function setRole(r) {
+    document.getElementById('role').value = r;
+    const active = 'border-primary bg-primary-container/30 text-primary';
+    const inactive = 'border-outline-variant/40 text-on-surface-variant';
+    document.getElementById('pill-user').className = `flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border-2 font-semibold text-sm transition-all ${r==='user'?active:inactive}`;
+    document.getElementById('pill-mentor').className = `flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border-2 font-semibold text-sm transition-all ${r==='mentor'?active:inactive}`;
+  }
+
+  document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const err = document.getElementById('errMsg');
+    err.classList.add('hidden');
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        username: document.getElementById('username').value,
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value,
+        role: document.getElementById('role').value
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) { err.textContent = data.message; err.classList.remove('hidden'); return; }
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+    location.href = 'dashboard.html';
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Safe Space | Chat</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  tailwind.config={darkMode:"class",theme:{extend:{colors:{
+    "secondary-container":"#b5edec","on-secondary-container":"#225a5a",
+    "outline-variant":"#bbbaaf","on-surface-variant":"#65655c",
+    "on-primary":"#ffffff","surface":"#fdffda","on-surface":"#383830",
+    "surface-container-low":"#fcf9f0","surface-container-lowest":"#ffffff",
+    "surface-container-high":"#f0eee3","primary-container":"#b9ece7",
+    "on-primary-container":"#285a56","primary":"#3c6d69","primary-dim":"#2f605d",
+    "error":"#af3d3b"
+  },fontFamily:{"headline":["Manrope"],"body":["Inter"]}}}}
+</script>
+<style>
+  .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;}
+  body{min-height:100dvh;background:#fdffda;}
+  .hide-scrollbar::-webkit-scrollbar{display:none;}
+  .hide-scrollbar{-ms-overflow-style:none;scrollbar-width:none;}
+</style>
+</head>
+<body class="font-body text-on-surface flex flex-col h-screen">
+
+<!-- Header -->
+<header class="w-full bg-[#fdffda] flex justify-between items-center px-6 py-4 flex-shrink-0">
+  <div class="flex items-center gap-3">
+    <div class="w-10 h-10 bg-primary-container rounded-xl flex items-center justify-center">
+      <span class="material-symbols-outlined text-primary">spa</span>
+    </div>
+    <h1 class="font-['Manrope'] font-bold text-[#3c6d69] tracking-tight text-lg">Safe Space</h1>
+  </div>
+  <button onclick="endSession()" class="flex items-center gap-2 px-4 py-2 rounded-xl text-error bg-error/5 hover:bg-error/10 transition-colors border border-error/10 text-sm font-semibold">
+    <span class="material-symbols-outlined text-[18px]">logout</span> End Session
+  </button>
+</header>
+
+<!-- Chat identity banner -->
+<div class="flex flex-col items-center py-5 flex-shrink-0">
+  <div class="relative mb-3">
+    <div class="absolute inset-0 bg-primary-container/30 blur-2xl rounded-full"></div>
+    <div class="relative w-16 h-16 rounded-full bg-surface-container-lowest flex items-center justify-center shadow-sm">
+      <span class="material-symbols-outlined text-[32px] text-primary">support_agent</span>
+    </div>
+    <div class="absolute bottom-1 right-1 w-4 h-4 bg-primary border-4 border-surface rounded-full"></div>
+  </div>
+  <h2 id="chatTitle" class="font-headline text-xl font-bold text-on-surface tracking-tight mb-1">Anonymous Mentor</h2>
+  <p class="text-on-surface-variant text-xs max-w-xs text-center">This space is completely private. Your identity remains protected.</p>
+</div>
+
+<!-- Messages -->
+<div id="messages" class="flex-1 overflow-y-auto hide-scrollbar px-4 md:px-8 max-w-4xl w-full mx-auto space-y-4 pb-4">
+  <div class="flex justify-center">
+    <span class="px-3 py-1 bg-surface-container-high rounded-full text-[11px] font-medium text-on-surface-variant uppercase tracking-wider">Today</span>
+  </div>
+</div>
+
+<!-- Input -->
+<div class="flex-shrink-0 max-w-4xl w-full mx-auto px-4 md:px-8 pb-8 pt-2">
+  <div class="bg-surface-container-lowest/80 backdrop-blur-xl rounded-[2rem] p-3 shadow-[0_12px_40px_rgba(56,56,48,0.08)] border border-outline-variant/15">
+    <div class="flex items-center gap-2">
+      <input id="msgInput" type="text" placeholder="Type your feelings here..."
+        class="flex-1 bg-transparent border-none focus:ring-0 text-on-surface placeholder:text-on-surface-variant/50 font-body py-3 px-2 outline-none text-sm"/>
+      <button onclick="sendMessage()"
+        class="bg-primary hover:bg-primary-dim text-on-primary w-12 h-12 rounded-full flex items-center justify-center transition-all active:scale-95 shadow-lg shadow-primary/20">
+        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">send</span>
+      </button>
+    </div>
+  </div>
+  <div class="flex justify-center mt-3">
+    <div class="flex items-center gap-1.5 opacity-40">
+      <span class="material-symbols-outlined text-[14px]">lock</span>
+      <span class="text-[10px] font-medium tracking-wide">END-TO-END ENCRYPTED &amp; ANONYMOUS</span>
+    </div>
+  </div>
+</div>
+
+<div class="fixed top-[20%] -left-[10%] w-[40%] h-[40%] bg-primary-container/10 blur-[120px] rounded-full -z-10"></div>
+<div class="fixed bottom-[10%] -right-[10%] w-[30%] h-[30%] bg-secondary-container/20 blur-[100px] rounded-full -z-10"></div>
+
+<script>
+const token = localStorage.getItem('token');
+const user = JSON.parse(localStorage.getItem('user') || 'null');
+const roomId = localStorage.getItem('roomId');
+const sessionId = localStorage.getItem('sessionId');
+if (!token || !user || !roomId) location.href = 'dashboard.html';
+
+document.getElementById('chatTitle').textContent = user.role === 'mentor' ? 'Chatting with User' : 'Chatting with Mentor';
+
+const socket = io();
+socket.emit('join-room', roomId);
+
+fetch(`/api/sessions/${roomId}/messages`, {headers:{'Authorization':`Bearer ${token}`}})
+  .then(r => r.json()).then(data => {
+    if (data.messages && data.messages.length > 0)
+      data.messages.forEach(m => appendMessage(m.text, m.senderRole, m.createdAt));
+  });
+
+socket.on('receive-message', ({text, senderRole, createdAt}) => appendMessage(text, senderRole, createdAt));
+
+function appendMessage(text, senderRole, createdAt) {
+  const box = document.getElementById('messages');
+  const isMe = senderRole === user.role;
+  const time = new Date(createdAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  const label = senderRole === 'mentor' ? 'Mentor' : 'User';
+  const wrap = document.createElement('div');
+  wrap.className = `flex ${isMe ? 'justify-end' : 'justify-start'}`;
+
+  if (!isMe) {
+    wrap.innerHTML = `<div class="flex items-start gap-3 max-w-[85%]">
+      <div class="w-8 h-8 rounded-full bg-primary-container flex-shrink-0 flex items-center justify-center">
+        <span class="material-symbols-outlined text-[18px] text-primary">diversity_1</span>
+      </div>
+      <div>
+        <div class="bg-surface-container-low p-4 rounded-2xl rounded-tl-none shadow-sm text-on-surface leading-relaxed text-sm">${escHtml(text)}</div>
+        <span class="text-[10px] text-on-surface-variant/60 ml-1 mt-1 block">${label} · ${time}</span>
+      </div>
+    </div>`;
+  } else {
+    wrap.innerHTML = `<div class="flex items-end gap-3 max-w-[85%]">
+      <div>
+        <div class="bg-primary text-on-primary p-4 rounded-2xl rounded-br-none shadow-sm leading-relaxed text-sm">${escHtml(text)}</div>
+        <span class="text-[10px] text-on-surface-variant/60 mr-1 mt-1 block text-right">You · ${time}</span>
+      </div>
+    </div>`;
+  }
+
+  box.appendChild(wrap);
+  box.scrollTop = box.scrollHeight;
+}
+
+function sendMessage() {
+  const input = document.getElementById('msgInput');
+  const text = input.value.trim();
+  if (!text) return;
+  socket.emit('send-message', {roomId, senderId: user.id, senderRole: user.role, text});
+  input.value = '';
+}
+
+document.getElementById('msgInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+
+async function endSession() {
+  if (!confirm('End this session?')) return;
+  await fetch(`/api/sessions/${sessionId}/complete`, {method:'POST', headers:{'Authorization':`Bearer ${token}`}});
+  socket.emit('leave-room', roomId);
+  localStorage.removeItem('roomId');
+  localStorage.removeItem('sessionId');
+  location.href = 'dashboard.html';
+}
+
+function escHtml(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+</script>
+</body>
+</html>
