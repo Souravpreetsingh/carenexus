@@ -85,7 +85,7 @@
     if (!res.ok) { err.textContent = data.message; err.classList.remove('hidden'); return; }
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
-    location.href = 'dashboard.html';
+    location.href = data.user.role === 'admin' ? 'admin.html' : 'dashboard.html';
   });
 </script>
 </body>

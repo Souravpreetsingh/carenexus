@@ -9,6 +9,7 @@ const path = require('path');
 const Message = require('./models/Message');
 const authRoutes = require('./routes/auth');
 const sessionRoutes = require('./routes/sessions');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 const server = http.createServer(app);
@@ -22,6 +23,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/sessions', sessionRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Serve frontend for all non-API routes
 app.get('*', (req, res) => {
@@ -51,6 +53,12 @@ io.on('connection', (socket) => {
   socket.on('leave-room', (roomId) => {
     socket.leave(roomId);
   });
+
+  // WebRTC call signaling
+  socket.on('call-offer',  ({ roomId, offer, callType }) => socket.to(roomId).emit('call-offer',  { offer, callType }));
+  socket.on('call-answer', ({ roomId, answer })          => socket.to(roomId).emit('call-answer', { answer }));
+  socket.on('call-ice',    ({ roomId, candidate })       => socket.to(roomId).emit('call-ice',    { candidate }));
+  socket.on('call-ended',  ({ roomId })                  => socket.to(roomId).emit('call-ended'));
 });
 
 // Connect DB and start server

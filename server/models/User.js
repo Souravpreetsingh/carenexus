@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true, trim: true },
   email:    { type: String, required: true, unique: true, lowercase: true },
   password: { type: String, required: true },
-  role:     { type: String, enum: ['user', 'mentor'], default: 'user' },
+  role:     { type: String, enum: ['user', 'mentor', 'admin'], default: 'user' },
   isApproved: { type: Boolean, default: true }, // mentors can be set to false for approval flow
   createdAt: { type: Date, default: Date.now }
 });

@@ -36,9 +36,21 @@
     </div>
     <h1 class="font-['Manrope'] font-bold text-[#3c6d69] tracking-tight text-lg">Safe Space</h1>
   </div>
-  <button onclick="endSession()" class="flex items-center gap-2 px-4 py-2 rounded-xl text-error bg-error/5 hover:bg-error/10 transition-colors border border-error/10 text-sm font-semibold">
-    <span class="material-symbols-outlined text-[18px]">logout</span> End Session
-  </button>
+  <div class="flex items-center gap-2">
+    <button onclick="startCall('audio')" title="Voice Call"
+      class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm font-semibold">
+      <span class="material-symbols-outlined text-[18px]">call</span>
+      <span class="hidden sm:inline">Voice</span>
+    </button>
+    <button onclick="startCall('video')" title="Video Call"
+      class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm font-semibold">
+      <span class="material-symbols-outlined text-[18px]">videocam</span>
+      <span class="hidden sm:inline">Video</span>
+    </button>
+    <button onclick="endSession()" class="flex items-center gap-2 px-4 py-2 rounded-xl text-error bg-error/5 hover:bg-error/10 transition-colors border border-error/10 text-sm font-semibold">
+      <span class="material-symbols-outlined text-[18px]">logout</span> End
+    </button>
+  </div>
 </header>
 
 <!-- Chat identity banner -->
@@ -81,6 +93,57 @@
   </div>
 </div>
 
+<!-- Incoming call modal -->
+<div id="incomingModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+  <div class="bg-surface-container-lowest rounded-2xl p-8 shadow-2xl flex flex-col items-center gap-6 w-80">
+    <div class="w-20 h-20 rounded-full bg-primary-container flex items-center justify-center animate-pulse">
+      <span id="incomingIcon" class="material-symbols-outlined text-primary text-4xl">call</span>
+    </div>
+    <div class="text-center">
+      <p class="font-headline font-bold text-xl">Incoming Call</p>
+      <p id="incomingType" class="text-on-surface-variant text-sm mt-1">Voice Call</p>
+    </div>
+    <div class="flex gap-4">
+      <button onclick="rejectCall()"
+        class="w-14 h-14 rounded-full bg-error flex items-center justify-center text-white shadow-lg hover:opacity-90 active:scale-95 transition-all">
+        <span class="material-symbols-outlined">call_end</span>
+      </button>
+      <button onclick="acceptCall()"
+        class="w-14 h-14 rounded-full bg-primary flex items-center justify-center text-white shadow-lg hover:opacity-90 active:scale-95 transition-all">
+        <span class="material-symbols-outlined">call</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Active call overlay -->
+<div id="callOverlay" class="hidden fixed inset-0 z-40 bg-on-surface/95 flex flex-col items-center justify-between py-12">
+  <!-- Video elements -->
+  <video id="remoteVideo" autoplay playsinline class="absolute inset-0 w-full h-full object-cover opacity-90"></video>
+  <video id="localVideo" autoplay playsinline muted class="absolute bottom-28 right-4 w-32 h-44 object-cover rounded-2xl border-2 border-white/20 shadow-xl z-10"></video>
+
+  <div class="relative z-10 text-center text-white">
+    <p class="font-headline font-bold text-2xl" id="callStatusText">Calling...</p>
+    <p id="callTimer" class="text-white/60 text-sm mt-1"></p>
+  </div>
+
+  <!-- Call controls -->
+  <div class="relative z-10 flex items-center gap-6">
+    <button onclick="toggleMute()" id="muteBtn"
+      class="w-14 h-14 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-all">
+      <span class="material-symbols-outlined">mic</span>
+    </button>
+    <button onclick="hangUp()"
+      class="w-16 h-16 rounded-full bg-error flex items-center justify-center text-white shadow-xl hover:opacity-90 active:scale-95 transition-all">
+      <span class="material-symbols-outlined text-3xl">call_end</span>
+    </button>
+    <button onclick="toggleCamera()" id="cameraBtn"
+      class="w-14 h-14 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-all">
+      <span class="material-symbols-outlined">videocam</span>
+    </button>
+  </div>
+</div>
+
 <div class="fixed top-[20%] -left-[10%] w-[40%] h-[40%] bg-primary-container/10 blur-[120px] rounded-full -z-10"></div>
 <div class="fixed bottom-[10%] -right-[10%] w-[30%] h-[30%] bg-secondary-container/20 blur-[100px] rounded-full -z-10"></div>
 
@@ -111,7 +174,6 @@ function appendMessage(text, senderRole, createdAt) {
   const label = senderRole === 'mentor' ? 'Mentor' : 'User';
   const wrap = document.createElement('div');
   wrap.className = `flex ${isMe ? 'justify-end' : 'justify-start'}`;
-
   if (!isMe) {
     wrap.innerHTML = `<div class="flex items-start gap-3 max-w-[85%]">
       <div class="w-8 h-8 rounded-full bg-primary-container flex-shrink-0 flex items-center justify-center">
@@ -130,7 +192,6 @@ function appendMessage(text, senderRole, createdAt) {
       </div>
     </div>`;
   }
-
   box.appendChild(wrap);
   box.scrollTop = box.scrollHeight;
 }
@@ -147,6 +208,7 @@ document.getElementById('msgInput').addEventListener('keydown', e => { if (e.key
 
 async function endSession() {
   if (!confirm('End this session?')) return;
+  hangUp();
   await fetch(`/api/sessions/${sessionId}/complete`, {method:'POST', headers:{'Authorization':`Bearer ${token}`}});
   socket.emit('leave-room', roomId);
   localStorage.removeItem('roomId');
@@ -155,6 +217,152 @@ async function endSession() {
 }
 
 function escHtml(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ─── WebRTC Call Logic ────────────────────────────────────────────────────────
+
+let pc = null;
+let localStream = null;
+let callType = 'audio';
+let isMuted = false;
+let isCameraOff = false;
+let callTimerInterval = null;
+let callSeconds = 0;
+let pendingOffer = null;
+
+const iceConfig = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+
+async function startCall(type) {
+  callType = type;
+  try {
+    localStream = await navigator.mediaDevices.getUserMedia(
+      type === 'video' ? { audio: true, video: true } : { audio: true, video: false }
+    );
+    document.getElementById('localVideo').srcObject = localStream;
+    setupPeerConnection();
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+    socket.emit('call-offer', { roomId, offer, callType: type });
+    showCallOverlay('Calling...');
+  } catch (e) {
+    alert('Could not access microphone/camera: ' + e.message);
+  }
+}
+
+function setupPeerConnection() {
+  pc = new RTCPeerConnection(iceConfig);
+  if (localStream) localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
+
+  pc.ontrack = e => {
+    document.getElementById('remoteVideo').srcObject = e.streams[0];
+  };
+
+  pc.onicecandidate = e => {
+    if (e.candidate) socket.emit('call-ice', { roomId, candidate: e.candidate });
+  };
+
+  pc.onconnectionstatechange = () => {
+    if (pc.connectionState === 'connected') {
+      document.getElementById('callStatusText').textContent = 'Connected';
+      startCallTimer();
+    }
+    if (['disconnected','failed','closed'].includes(pc.connectionState)) hangUp();
+  };
+}
+
+// ── Signaling events ──────────────────────────────────────────────────────────
+
+socket.on('call-offer', async ({ offer, callType: type }) => {
+  callType = type;
+  pendingOffer = offer;
+  document.getElementById('incomingIcon').textContent = type === 'video' ? 'videocam' : 'call';
+  document.getElementById('incomingType').textContent = type === 'video' ? 'Video Call' : 'Voice Call';
+  document.getElementById('incomingModal').classList.remove('hidden');
+});
+
+socket.on('call-answer', async ({ answer }) => {
+  if (pc) await pc.setRemoteDescription(new RTCSessionDescription(answer));
+});
+
+socket.on('call-ice', async ({ candidate }) => {
+  if (pc) await pc.addIceCandidate(new RTCIceCandidate(candidate)).catch(() => {});
+});
+
+socket.on('call-ended', () => cleanupCall());
+
+// ── Accept / Reject ───────────────────────────────────────────────────────────
+
+async function acceptCall() {
+  document.getElementById('incomingModal').classList.add('hidden');
+  try {
+    localStream = await navigator.mediaDevices.getUserMedia(
+      callType === 'video' ? { audio: true, video: true } : { audio: true, video: false }
+    );
+    document.getElementById('localVideo').srcObject = localStream;
+    setupPeerConnection();
+    await pc.setRemoteDescription(new RTCSessionDescription(pendingOffer));
+    const answer = await pc.createAnswer();
+    await pc.setLocalDescription(answer);
+    socket.emit('call-answer', { roomId, answer });
+    showCallOverlay('Connecting...');
+  } catch (e) {
+    alert('Could not access microphone/camera: ' + e.message);
+  }
+}
+
+function rejectCall() {
+  document.getElementById('incomingModal').classList.add('hidden');
+  socket.emit('call-ended', { roomId });
+}
+
+function hangUp() {
+  socket.emit('call-ended', { roomId });
+  cleanupCall();
+}
+
+function cleanupCall() {
+  if (pc) { pc.close(); pc = null; }
+  if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
+  document.getElementById('remoteVideo').srcObject = null;
+  document.getElementById('localVideo').srcObject = null;
+  document.getElementById('callOverlay').classList.add('hidden');
+  document.getElementById('incomingModal').classList.add('hidden');
+  clearInterval(callTimerInterval);
+  callSeconds = 0;
+  document.getElementById('callTimer').textContent = '';
+}
+
+function showCallOverlay(status) {
+  document.getElementById('callStatusText').textContent = status;
+  document.getElementById('callOverlay').classList.remove('hidden');
+  // hide camera button for audio-only calls
+  document.getElementById('cameraBtn').style.display = callType === 'audio' ? 'none' : 'flex';
+}
+
+function startCallTimer() {
+  callSeconds = 0;
+  callTimerInterval = setInterval(() => {
+    callSeconds++;
+    const m = String(Math.floor(callSeconds / 60)).padStart(2, '0');
+    const s = String(callSeconds % 60).padStart(2, '0');
+    document.getElementById('callTimer').textContent = `${m}:${s}`;
+  }, 1000);
+}
+
+function toggleMute() {
+  if (!localStream) return;
+  isMuted = !isMuted;
+  localStream.getAudioTracks().forEach(t => t.enabled = !isMuted);
+  const btn = document.getElementById('muteBtn').querySelector('span');
+  btn.textContent = isMuted ? 'mic_off' : 'mic';
+}
+
+function toggleCamera() {
+  if (!localStream) return;
+  isCameraOff = !isCameraOff;
+  localStream.getVideoTracks().forEach(t => t.enabled = !isCameraOff);
+  const btn = document.getElementById('cameraBtn').querySelector('span');
+  btn.textContent = isCameraOff ? 'videocam_off' : 'videocam';
+}
 </script>
 </body>
 </html>
