@@ -66,6 +66,6 @@ const PORT = process.env.PORT || 3000;
 mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/emotional_support')
   .then(() => {
     console.log('MongoDB connected');
-    server.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+    server.listen(PORT, '0.0.0.0', () => console.log(`Server running on http://localhost:${PORT}`));
   })
   .catch(err => console.error('DB connection error:', err));
